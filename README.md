@@ -13,7 +13,7 @@ This repo is a formatted R library and can be installed with devtools::install_g
 
 `require(devtools)`
 
-`devtools::install_github("cpalmer718/book_parsing")`
+`devtools::install_github("cpalmer718/book.parsing")`
 
 ## Usage
 

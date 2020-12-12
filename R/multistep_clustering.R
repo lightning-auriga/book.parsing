@@ -13,6 +13,7 @@
 #'
 #' @param x character vector, input values to be clustered
 #' @return Levenshtein distance matrix with negated values, ready for 'apclust'
+#' @export
 wrap.dist.mat <- function(x) {
 	-1 * adist(x, ignore.case = TRUE)
 }
@@ -37,6 +38,7 @@ wrap.dist.mat <- function(x) {
 #'  to cut and call clusters
 #' @return data frame, the input with appended columns 'tag'.search.input
 #'  and 'tag'.consensus.label reflecting the input and output of this function execution
+#' @export
 run.multistep.clustering <- function(df, query, tag, hclust.h) {
 	out.df <- df
 	out.df[,paste(tag, ".search.input", sep="")] <- query
@@ -57,12 +59,12 @@ run.multistep.clustering <- function(df, query, tag, hclust.h) {
 		ap.input <- rep(ap.input, 5)
 		clust.name <- NA
 		if (length(ap.input) > 1) {
-			suppressWarnings(ap.res <- apclust::apcluster(book_parsing::wrap.dist.mat, ap.input, q = 0, details = FALSE))
+			suppressWarnings(ap.res <- apcluster::apcluster(book.parsing::wrap.dist.mat, ap.input, q = 0, details = FALSE))
 			if (length(ap.res@clusters) == 1) {
 				clust.name <- ap.input[ap.res@exemplars[1]]
 			} else {
-				agg.res <- apclust::aggExCluster(x = ap.res)
-				cutree.res <- cutree(agg.res, k = 1)
+				agg.res <- apcluster::aggExCluster(x = ap.res)
+				cutree.res <- apcluster::cutree(agg.res, k = 1)
 				clust.name <- ap.input[cutree.res@exemplars[1]]
 			}
 			out.df[,paste(tag, ".consensus.label", sep="")][query %in% names(unlist(ap.res@clusters))] <- clust.name
