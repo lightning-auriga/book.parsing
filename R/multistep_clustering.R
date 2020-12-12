@@ -57,11 +57,11 @@ run.multistep.clustering <- function(df, query, tag, hclust.h) {
 		ap.input <- rep(ap.input, 5)
 		clust.name <- NA
 		if (length(ap.input) > 1) {
-			suppressWarnings(ap.res <- apcluster(book_parsing::wrap.dist.mat, ap.input, q = 0, details = FALSE))
+			suppressWarnings(ap.res <- apclust::apcluster(book_parsing::wrap.dist.mat, ap.input, q = 0, details = FALSE))
 			if (length(ap.res@clusters) == 1) {
 				clust.name <- ap.input[ap.res@exemplars[1]]
 			} else {
-				agg.res <- aggExCluster(x = ap.res)
+				agg.res <- apclust::aggExCluster(x = ap.res)
 				cutree.res <- cutree(agg.res, k = 1)
 				clust.name <- ap.input[cutree.res@exemplars[1]]
 			}
