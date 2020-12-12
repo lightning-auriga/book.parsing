@@ -176,16 +176,7 @@ parse_raw_data <- function(input.filename,
 	replaced.data <- book.parsing::apply.posthoc.overrides(result.df$raw.string, result.df$final.title, result.df$final.author, postprocessing.overrides)
 	result.df[,"final.title"] <- replaced.data[["title"]]
 	result.df[,"final.author"] <- replaced.data[["author"]]
-	## compute some mild summary data for function
-	print("computing mild summary statistics, which needs to get modularized out :(")
-	title.author.combo.count <- sapply(1:nrow(result.df), function(i) {length(which(final.title == final.title[i] & !is.na(final.title) & final.author == final.author[i] & !is.na(final.author)))})
-	author.count <- sapply(1:nrow(result.df), function(i) {length(which(final.author == final.author[i] & !is.na(final.author)))})
-	result.df[,"title.author.count"] <- title.author.combo.count
-	result.df[,"author.count"] <- author.count
-	result.df[,"final.message"] <- final.message
-	write.table(result.df, paste(output.prefix, ".tsv", sep = ""), row.names=FALSE, col.names=TRUE, quote=FALSE, sep="\t")
-	write.table(cbind(sort(table(paste(result.df$final.title, result.df$final.author, sep = " by ")[!is.na(result.df$final.title)]), decreasing = TRUE)),
-				paste(output.prefix, "_book_summary.tsv", sep = ""), row.names=TRUE, col.names=FALSE, quote=FALSE, sep="\t")
-	write.table(cbind(sort(table(result.df$final.author[!is.na(result.df$final.author)]), decreasing = TRUE)),
-				paste(output.prefix, "_author_summary.tsv", sep = ""), row.names=TRUE, col.names=FALSE, quote=FALSE, sep="\t")
+	result.df[,"final.message"] <- final.messag	result.df[,"final.message"] <- final.message
+	## pass handling to separate output formatter
+	process.output(result.df, output.prefix, create.summary.data = FALSE)
 }
