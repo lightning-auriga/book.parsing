@@ -2,4 +2,7 @@
 
 export(apply.initial.overrides)
 export(apply.posthoc.overrides)
+export(apply.standard.case)
 export(parse_raw_data)
+export(run.multistep.clustering)
+export(wrap.dist.mat)
