@@ -10,7 +10,9 @@ formats as needed.
 This repo is a formatted R library and can be installed with devtools::install_github:
 
 `install.packages("devtools")`
+
 `require(devtools)`
+
 `devtools::install_github("cpalmer718/book_parsing")`
 
 ## Usage
