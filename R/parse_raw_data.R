@@ -176,7 +176,7 @@ parse_raw_data <- function(input.filename,
 	replaced.data <- book.parsing::apply.posthoc.overrides(result.df$raw.string, result.df$final.title, result.df$final.author, postprocessing.overrides)
 	result.df[,"final.title"] <- replaced.data[["title"]]
 	result.df[,"final.author"] <- replaced.data[["author"]]
-	result.df[,"final.message"] <- final.messag	result.df[,"final.message"] <- final.message
+	result.df[,"final.message"] <- final.message
 	## pass handling to separate output formatter
 	process.output(result.df, output.prefix, create.summary.data = FALSE)
 }
