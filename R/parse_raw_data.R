@@ -25,8 +25,8 @@ parse_raw_data <- function(input.filename,
 	stopifnot(is.vector(postprocessing.overrides, mode = "character") |
 			  is.na(postprocessing.overrides))
 	stopifnot(is.logical(disable.nlp.correction))
-	
-	h <- read.xlsx(input.filename)
+	print(paste("reading input from '", input.filename, "' and parsing out into individual entries", sep=""))
+	h <- openxlsx::read.xlsx(input.filename)
 	## preprocess: remove identical consecutive rows as possible dups
 	remove.rows <- duplicated(h[,-1])
 	h <- h[!remove.rows,]
@@ -38,8 +38,10 @@ parse_raw_data <- function(input.filename,
 	all.categories <- all.categories[!is.na(all.candidates)]
 	all.candidates <- all.candidates[!is.na(all.candidates)]
 	raw.string <- all.candidates
-	all.candidates <- apply.initial.overrides(all.candidates, preprocessing.overrides)
-
+	if (!is.na(preprocessing.overrides)) {
+		print(paste("applying preprocessing overrides from '", preprocessing.overrides, "'", sep=""))
+	}
+	all.candidates <- book.parsing::apply.initial.overrides(all.candidates, preprocessing.overrides)
 	## start building a result data frame
 	result.df <- data.frame(raw.string = raw.string,
 							original.string = all.candidates,
@@ -62,6 +64,7 @@ parse_raw_data <- function(input.filename,
 	## Title - Author
 	## Title / Author
 	## there are also some with no delimiter, and some with no author at all.
+	print("splitting entries by recognized 'TITLE - AUTHOR' and 'title by author' structures")
 	title.by.author.pattern <- "^ *(.+[A-Za-z]) +by +(.+[A-Za-z]) *$"
 	title.dash.author.pattern <- "^ *(.+[A-Za-z]) *[/-] *(.+[A-Za-z]) *$"
 	title.by.author.match <- grepl(title.by.author.pattern, all.candidates, perl = TRUE)
@@ -87,18 +90,22 @@ parse_raw_data <- function(input.filename,
 	all.merged.withblanks[!neither.match] <- all.merged
 
 	## run multi-step clustering and labeling on the combined "title author" queries
+	print("running multistep clustering")
+	print("on combined data")
 	all.query <- all.merged.withblanks
 	all.query[neither.match] <- as.vector(result.df$original.string, mode = "character")[neither.match]
-	result.df <- run.multistep.clustering(result.df, all.query, "combined", 5)
+	result.df <- book.parsing::run.multistep.clustering(result.df, all.query, "combined", 5)
 	## run multi-step clustering and labeling on just the titles, and the unmatched patterns
+	print("on titles only")
 	title.query <- result.df$predicted.title
 	title.query[neither.match] <- as.vector(result.df$original.string, mode = "character")[neither.match]
-	result.df <- run.multistep.clustering(result.df, title.query, "title", 3)
+	result.df <- book.parsing::run.multistep.clustering(result.df, title.query, "title", 3)
 	## run multi-step clustering and labeling on just the authors, without the unmatched patterns
+	print("on authors only")
 	result.df.nomatch <- result.df[neither.match,]
 	result.df.withmatch <- result.df[!neither.match,]
 	author.query <- result.df.withmatch$predicted.author
-	result.df.withmatch <- run.multistep.clustering(result.df.withmatch, author.query, "author", 3)
+	result.df.withmatch <- book.parsing::run.multistep.clustering(result.df.withmatch, author.query, "author", 3)
 	result.df.nomatch$author.search.input <- NA
 	result.df.nomatch$author.consensus.label <- NA
 	result.df <- rbind(result.df.withmatch, result.df.nomatch)
@@ -117,10 +124,11 @@ parse_raw_data <- function(input.filename,
 	##       - assume the title belongs to the author, successful
 	##     - otherwise be conservative and say unknown
 	##   - otherwise tentatively set as unknown
+	print("processing final assignments")
 	final.title <- rep(NA, nrow(result.df))
 	final.author <- rep(NA, nrow(result.df))
 	final.message <- rep(NA, nrow(result.df))
-	for (i in 1:nrow(result.df)) {
+	for (i in seq_len(nrow(result.df))) {
 		if (neither.match[i]) {
 			if (grepl("!", result.df[i, "combined.consensus.label"])) {
 				matched.authors <- result.df[result.df$combined.consensus.label == result.df[i, "combined.consensus.label"], "author.consensus.label"]
@@ -157,27 +165,19 @@ parse_raw_data <- function(input.filename,
 			}
 		}
 	}
-	## override: some single submissions are CAPS LOCK ONLY which is just silly
-	## find them, and if they're literally all caps, title case them
-	apply.standard.case <- function(i, apply.to.all) {
-		res <- i
-		if (apply.to.all) {
-			res <- gsub(" you$", " You", gsub("you ", "You ", gsub(" i ", " I ", capitalize(toTitleCase(tolower(res))))))
-			res <- gsub(" will ", " Will ", gsub(" that ", " That ", res))
-			res <- gsub(" after ", " After ", gsub(" after$", " After", res))
-			res <- gsub(" than ", " Than ", gsub(" than$", " Than", res))
-		} else {
-			res[grepl("^[A-Z ]*$", res, perl = TRUE)] <- toTitleCase(tolower(res[grepl("^[A-Z ]*$", res, perl = TRUE)]))
-		}
-		res
-	}
-	result.df[,"final.title"] <- apply.standard.case(final.title, TRUE)
-	result.df[,"final.author"] <- apply.standard.case(final.author, FALSE)
+	## apply title case
+	print("applying modified title case to labels")
+	result.df[,"final.title"] <- book.parsing::apply.standard.case(final.title, TRUE)
+	result.df[,"final.author"] <- book.parsing::apply.standard.case(final.author, FALSE)
 	## apply user-specified post-NLP replacements if necessary
-	replaced.data <- apply.posthoc.overrides(result.df$raw.string, result.df$final.title, result.df$final.author, postprocessing.overrides)
+	if (!is.na(postprocessing.overrides)) {
+		print(paste("applying postprocessing overrides from '", postprocessing.overrides, "'", sep=""))
+	}
+	replaced.data <- book.parsing::apply.posthoc.overrides(result.df$raw.string, result.df$final.title, result.df$final.author, postprocessing.overrides)
 	result.df[,"final.title"] <- replaced.data[["title"]]
 	result.df[,"final.author"] <- replaced.data[["author"]]
 	## compute some mild summary data for function
+	print("computing mild summary statistics, which needs to get modularized out :(")
 	title.author.combo.count <- sapply(1:nrow(result.df), function(i) {length(which(final.title == final.title[i] & !is.na(final.title) & final.author == final.author[i] & !is.na(final.author)))})
 	author.count <- sapply(1:nrow(result.df), function(i) {length(which(final.author == final.author[i] & !is.na(final.author)))})
 	result.df[,"title.author.count"] <- title.author.combo.count
