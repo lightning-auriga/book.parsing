@@ -18,7 +18,7 @@ process.output <- function(data, output.prefix, create.summary.data = TRUE) {
 		result.df <- data
 	} else if (is.vector(data, mode = "character")) {
 		stopifnot(file.exists(data))
-		result.df <- read.table(data, header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+		result.df <- read.table(data, header = TRUE, sep = "\t",, quote = "", stringsAsFactors = FALSE)
 	} else {
 		stop("unrecognized data format in function 'process.output'")
 	}
@@ -27,18 +27,19 @@ process.output <- function(data, output.prefix, create.summary.data = TRUE) {
 	if (create.summary.data) {
 		## compute some mild summary data for function
 		print("collapsing data into final report format")
-		final.df <- data.frame(Category = NA, Vote = NA, Title = NA, Author = NA, Count = NA)
+		final.df <- data.frame(Category = c(), Vote = c(), Title = c(), Author = c(), Count = c())
 		for (category in unique(result.df$category)) {
 			category.df <- result.df[result.df[, "category"] == category, ]
 			category.df <- category.df[!is.na(category.df[, "final.title"]) &
 									   !is.na(category.df[, "final.author"]), ]
 			category.vote <- paste(category.df$final.title, category.df$final.author, sep = " by ")
-			category.table <- sort(table(category.vote), decreasing = TRUE)
+			category.table <- as.data.frame(table(category.vote))
+			category.table <- category.table[order(category.table[, 2], decreasing = TRUE), ]
 			category.df <- data.frame(Category = category,
-									  Vote = names(category.table),
-									  Title = gsub("^(.*) by (.*)$", "\\1", names(category.table), perl = TRUE),
-									  Author = gsub("^(.*) by (.*)$", "\\2", names(category.table), perl = TRUE),
-									  Count = unname(category.table))
+									  Vote = category.table[, 1],
+									  Title = gsub("^(.*) by (.*)$", "\\1", category.table[, 1], perl = TRUE),
+									  Author = gsub("^(.*) by (.*)$", "\\2", category.table[, 1], perl = TRUE),
+									  Count = category.table[, 2])
 			final.df <- rbind(final.df, category.df)
 		}
 		write.table(final.df, paste(output.prefix, ".final-results.tsv", sep = ""), row.names = FALSE, col.names = TRUE, quote = FALSE, sep = "\t")
