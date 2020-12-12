@@ -1,4 +1,4 @@
-# book_parsing
+# book.parsing
  
 Read string variants of "book - author" combinations and parse them into their component parts.
 Harmonize the values across multiple entries with the same value. Report the results in various
@@ -10,7 +10,9 @@ formats as needed.
 This repo is a formatted R library and can be installed with devtools::install_github:
 
 `install.packages("devtools")`
+
 `require(devtools)`
+
 `devtools::install_github("cpalmer718/book_parsing")`
 
 ## Usage
