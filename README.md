@@ -13,7 +13,7 @@ This repo is a formatted R library and can be installed with devtools::install_g
 
 `require(devtools)`
 
-`devtools::install_github("lightning-auriga/book_parsing")`
+`devtools::install_github("lightning-auriga/book.parsing")`
 
 ## Usage
 
