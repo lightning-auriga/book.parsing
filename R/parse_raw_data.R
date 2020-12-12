@@ -91,17 +91,17 @@ parse_raw_data <- function(input.filename,
 
 	## run multi-step clustering and labeling on the combined "title author" queries
 	print("running multistep clustering")
-	print("on combined data")
+	print("    on combined data")
 	all.query <- all.merged.withblanks
 	all.query[neither.match] <- as.vector(result.df$original.string, mode = "character")[neither.match]
 	result.df <- book.parsing::run.multistep.clustering(result.df, all.query, "combined", 5)
 	## run multi-step clustering and labeling on just the titles, and the unmatched patterns
-	print("on titles only")
+	print("    on titles only")
 	title.query <- result.df$predicted.title
 	title.query[neither.match] <- as.vector(result.df$original.string, mode = "character")[neither.match]
 	result.df <- book.parsing::run.multistep.clustering(result.df, title.query, "title", 3)
 	## run multi-step clustering and labeling on just the authors, without the unmatched patterns
-	print("on authors only")
+	print("    on authors only")
 	result.df.nomatch <- result.df[neither.match,]
 	result.df.withmatch <- result.df[!neither.match,]
 	author.query <- result.df.withmatch$predicted.author
