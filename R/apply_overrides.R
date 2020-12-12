@@ -7,6 +7,7 @@
 #' @param data input character vector of data to be processed
 #' @param filename name of file containing user-specified string replacements
 #' @return character vector of the same length as input, with replacements applied
+#' @export
 apply.initial.overrides <- function(data, filename) {
 	stopifnot(is.vector(data, mode = "character"))
 	stopifnot(is.vector(filename, mode = "character"))
@@ -37,6 +38,7 @@ apply.initial.overrides <- function(data, filename) {
 #' @param author.data input character vector containing post-NLP assigned authors
 #' @param filename input character vector containing filename of replacements
 #' @return list with 'title' and 'author' entries with replacements applied
+#' @export
 apply.posthoc.overrides <- function(raw.input, title.data, author.data, filename) {
 	stopifnot(is.vector(raw.input, mode = "character"))
 	stopifnot(is.vector(title.data, mode = "character"))
