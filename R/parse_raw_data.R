@@ -188,4 +188,4 @@ parse_raw_data <- function(input.filename,
 				paste(output.prefix, "_book_summary.tsv", sep = ""), row.names=TRUE, col.names=FALSE, quote=FALSE, sep="\t")
 	write.table(cbind(sort(table(result.df$final.author[!is.na(result.df$final.author)]), decreasing = TRUE)),
 				paste(output.prefix, "_author_summary.tsv", sep = ""), row.names=TRUE, col.names=FALSE, quote=FALSE, sep="\t")
-|
+}
