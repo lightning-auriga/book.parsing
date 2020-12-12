@@ -26,7 +26,7 @@ parse_raw_data <- function(input.filename,
 			  is.na(postprocessing.overrides))
 	stopifnot(is.logical(disable.nlp.correction))
 	
-	h <- read.xlsx(input.filename)
+	h <- openxlsx::read.xlsx(input.filename)
 	## preprocess: remove identical consecutive rows as possible dups
 	remove.rows <- duplicated(h[,-1])
 	h <- h[!remove.rows,]
@@ -162,12 +162,12 @@ parse_raw_data <- function(input.filename,
 	apply.standard.case <- function(i, apply.to.all) {
 		res <- i
 		if (apply.to.all) {
-			res <- gsub(" you$", " You", gsub("you ", "You ", gsub(" i ", " I ", capitalize(toTitleCase(tolower(res))))))
+			res <- gsub(" you$", " You", gsub("you ", "You ", gsub(" i ", " I ", Hmisc::capitalize(tools::toTitleCase(tolower(res))))))
 			res <- gsub(" will ", " Will ", gsub(" that ", " That ", res))
 			res <- gsub(" after ", " After ", gsub(" after$", " After", res))
 			res <- gsub(" than ", " Than ", gsub(" than$", " Than", res))
 		} else {
-			res[grepl("^[A-Z ]*$", res, perl = TRUE)] <- toTitleCase(tolower(res[grepl("^[A-Z ]*$", res, perl = TRUE)]))
+			res[grepl("^[A-Z ]*$", res, perl = TRUE)] <- tools::toTitleCase(tolower(res[grepl("^[A-Z ]*$", res, perl = TRUE)]))
 		}
 		res
 	}
