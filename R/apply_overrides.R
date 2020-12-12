@@ -20,6 +20,32 @@ apply.initial.overrides <- function(data, filename) {
 	result
 }
 
+#' Apply modified title case to certain entries
+#'
+#' An override: some single submissions are CAPS LOCK ONLY which is just silly.
+#' find them, and if they're literally all caps, title case them.
+#' note the enforcement of the entire thing being caps lock: this is because
+#' there are some author entries, in particular people who use pairs of initials
+#' (e.g. AB Jones) that should not be rendered "Ab Jones" :(
+#'
+#' @param i character vector of input data to possibly be adjusted
+#' @param apply.to.all should the values be corrected regardless of whether they're
+#' uniformly caps locked?
+#' @return the input data 'i' with requested adjustments applied
+#' @export
+apply.standard.case <- function(i, apply.to.all) {
+	res <- i
+	if (apply.to.all) {
+		res <- gsub(" you$", " You", gsub("you ", "You ", gsub(" i ", " I ", Hmisc::capitalize(tools::toTitleCase(tolower(res))))))
+		res <- gsub(" will ", " Will ", gsub(" that ", " That ", res))
+		res <- gsub(" after ", " After ", gsub(" after$", " After", res))
+		res <- gsub(" than ", " Than ", gsub(" than$", " Than", res))
+	} else {
+		res[grepl("^[A-Z ]*$", res, perl = TRUE)] <- tools::toTitleCase(tolower(res[grepl("^[A-Z ]*$", res, perl = TRUE)]))
+	}
+	res
+}
+
 #' Apply arbitrary replacements overriding the results of NLP
 #'
 #' Especially when the total number of submissions is low or the number of unique
