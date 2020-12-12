@@ -1,0 +1,23 @@
+Package: book.parsing
+Title: Parse "Title - Author" Pairs with NLP
+Version: 1.0.0
+Authors@R: 
+    person(given = "Lightning",
+           family = "Auriga",
+           role = c("aut", "cre"),
+           email = "palmer.cam@gmail.com")
+Description: Receive user-submitted "Title - Author" data, especially in formatted output
+             from google poll as Excel spreadsheet. Parse the information as best as possible
+             using standard format expectations. Cluster the data to try to harmonize formatting
+             for shared entries. Report the results for manual inspection and override. Reread
+             corrected data and report in a useful summarized fashion.
+License: use_mit_license()
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
+Imports:
+    openxlsx,
+    apcluster,
+    tools,
+    Hmisc
