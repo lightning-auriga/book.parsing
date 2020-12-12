@@ -91,17 +91,17 @@ parse_raw_data <- function(input.filename,
 
 	## run multi-step clustering and labeling on the combined "title author" queries
 	print("running multistep clustering")
-	print("on combined data")
+	print("    on combined data")
 	all.query <- all.merged.withblanks
 	all.query[neither.match] <- as.vector(result.df$original.string, mode = "character")[neither.match]
 	result.df <- book.parsing::run.multistep.clustering(result.df, all.query, "combined", 5)
 	## run multi-step clustering and labeling on just the titles, and the unmatched patterns
-	print("on titles only")
+	print("    on titles only")
 	title.query <- result.df$predicted.title
 	title.query[neither.match] <- as.vector(result.df$original.string, mode = "character")[neither.match]
 	result.df <- book.parsing::run.multistep.clustering(result.df, title.query, "title", 3)
 	## run multi-step clustering and labeling on just the authors, without the unmatched patterns
-	print("on authors only")
+	print("    on authors only")
 	result.df.nomatch <- result.df[neither.match,]
 	result.df.withmatch <- result.df[!neither.match,]
 	author.query <- result.df.withmatch$predicted.author
@@ -176,16 +176,7 @@ parse_raw_data <- function(input.filename,
 	replaced.data <- book.parsing::apply.posthoc.overrides(result.df$raw.string, result.df$final.title, result.df$final.author, postprocessing.overrides)
 	result.df[,"final.title"] <- replaced.data[["title"]]
 	result.df[,"final.author"] <- replaced.data[["author"]]
-	## compute some mild summary data for function
-	print("computing mild summary statistics, which needs to get modularized out :(")
-	title.author.combo.count <- sapply(1:nrow(result.df), function(i) {length(which(final.title == final.title[i] & !is.na(final.title) & final.author == final.author[i] & !is.na(final.author)))})
-	author.count <- sapply(1:nrow(result.df), function(i) {length(which(final.author == final.author[i] & !is.na(final.author)))})
-	result.df[,"title.author.count"] <- title.author.combo.count
-	result.df[,"author.count"] <- author.count
 	result.df[,"final.message"] <- final.message
-	write.table(result.df, paste(output.prefix, ".tsv", sep = ""), row.names=FALSE, col.names=TRUE, quote=FALSE, sep="\t")
-	write.table(cbind(sort(table(paste(result.df$final.title, result.df$final.author, sep = " by ")[!is.na(result.df$final.title)]), decreasing = TRUE)),
-				paste(output.prefix, "_book_summary.tsv", sep = ""), row.names=TRUE, col.names=FALSE, quote=FALSE, sep="\t")
-	write.table(cbind(sort(table(result.df$final.author[!is.na(result.df$final.author)]), decreasing = TRUE)),
-				paste(output.prefix, "_author_summary.tsv", sep = ""), row.names=TRUE, col.names=FALSE, quote=FALSE, sep="\t")
+	## pass handling to separate output formatter
+	process.output(result.df, output.prefix, create.summary.data = FALSE)
 }
