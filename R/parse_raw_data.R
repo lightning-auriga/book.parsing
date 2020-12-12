@@ -86,47 +86,6 @@ parse_raw_data <- function(input.filename,
 	all.merged.withblanks <- rep(NA, length(all.candidates))
 	all.merged.withblanks[!neither.match] <- all.merged
 
-	wrap.dist.mat <- function(x) {
-		-1 * adist(x, ignore.case = TRUE)
-	}
-
-	run.multistep.clustering <- function(df, query, tag, hclust.h) {
-		out.df <- df
-		out.df[,paste(tag, ".search.input", sep="")] <- query
-		## perform distance matrix calculation and clustering
-		dist.mat <- adist(query, ignore.case = TRUE)
-		## assign rownames for pretty printing later
-		rownames(dist.mat) <- query
-		## perform hierarchical clustering
-		hc <- hclust(as.dist(dist.mat))
-		## estimate optimal clustering configuration
-		res <- cutree(hc, h = hclust.h)
-		## now for the slightly bananas part. pull in affinity propagation to get representative labels
-		out.df[,paste(tag, ".consensus.label", sep="")] <- NA
-		for (i in unique(res)) {
-			ap.input <- names(res[res == i])
-			names(ap.input) <- ap.input
-			## for reasons, this library doesn't like small datasets, so... make input data proportionally larger lol
-			ap.input <- rep(ap.input, 5)
-			clust.name <- NA
-			if (length(ap.input) > 1) {
-				suppressWarnings(ap.res <- apcluster(wrap.dist.mat, ap.input, q = 0, details = FALSE))
-				if (length(ap.res@clusters) == 1) {
-					clust.name <- ap.input[ap.res@exemplars[1]]
-				} else {
-					agg.res <- aggExCluster(x = ap.res)
-					cutree.res <- cutree(agg.res, k = 1)
-					clust.name <- ap.input[cutree.res@exemplars[1]]
-				}
-				out.df[,paste(tag, ".consensus.label", sep="")][query %in% names(unlist(ap.res@clusters))] <- clust.name
-			} else {
-				clust.name <- ap.input[1]
-				out.df[,paste(tag, ".consensus.label", sep="")][query %in% clust.name] <- clust.name
-			}
-		}
-		out.df
-	}
-
 	## run multi-step clustering and labeling on the combined "title author" queries
 	all.query <- all.merged.withblanks
 	all.query[neither.match] <- as.vector(result.df$original.string, mode = "character")[neither.match]
