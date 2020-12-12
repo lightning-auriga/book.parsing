@@ -9,6 +9,7 @@ parse_raw_data(
   output.prefix,
   preprocessing.overrides = NA,
   postprocessing.overrides = NA,
+  remove.duplicates = TRUE,
   disable.nlp.correction = FALSE
 )
 }
@@ -20,6 +21,8 @@ parse_raw_data(
 \item{preprocessing.overrides}{character string, a file of Content/Replacement pairs delimited by TABs, or NA}
 
 \item{postprocessing.overrides}{character string, a file of Content/Replacement pairs delimited by TABs, or NA}
+
+\item{remove.duplicates}{logical, whether to remove rows in input data that are absolutely identical (will report on this if so)}
 
 \item{disable.nlp.correction}{logical, whether to just report the data as detected from input, without applying NLP corrections}
 }
