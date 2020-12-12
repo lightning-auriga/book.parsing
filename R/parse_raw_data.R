@@ -10,12 +10,14 @@
 #' @param output.prefix character string, prefix of files that will contain output for user intervention
 #' @param preprocessing.overrides character string, a file of Content/Replacement pairs delimited by TABs, or NA
 #' @param postprocessing.overrides character string, a file of Content/Replacement pairs delimited by TABs, or NA
+#' @param remove.duplicates logical, whether to remove rows in input data that are absolutely identical (will report on this if so)
 #' @param disable.nlp.correction logical, whether to just report the data as detected from input, without applying NLP corrections
 #' @export
 parse_raw_data <- function(input.filename,
 						   output.prefix,
 						   preprocessing.overrides = NA,
 						   postprocessing.overrides = NA,
+						   remove.duplicates = TRUE,
 						   disable.nlp.correction = FALSE) {
 	## input parameter consistency checks
 	stopifnot(is.vector(input.filename, mode = "character"))
@@ -24,12 +26,14 @@ parse_raw_data <- function(input.filename,
 			  is.na(preprocessing.overrides))
 	stopifnot(is.vector(postprocessing.overrides, mode = "character") |
 			  is.na(postprocessing.overrides))
+	stopifnot(is.logical(remove.duplicates))
 	stopifnot(is.logical(disable.nlp.correction))
 	print(paste("reading input from '", input.filename, "' and parsing out into individual entries", sep=""))
 	h <- openxlsx::read.xlsx(input.filename)
-	## preprocess: remove identical consecutive rows as possible dups
-	remove.rows <- duplicated(h[,-1])
-	h <- h[!remove.rows,]
+	if (remove.duplicates) {
+		## preprocess: remove identical rows as possible dups
+		h <- handle.duplicates(h, output.prefix)
+	}
 	## aggregate all information for clustering
 	all.candidates <- unname(unlist(h[,-1]))
 	## similarly aggregate which *categories* the votes were from
