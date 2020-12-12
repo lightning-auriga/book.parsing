@@ -1,4 +1,4 @@
-# book_parsing
+# book.parsing
  
 Read string variants of "book - author" combinations and parse them into their component parts.
 Harmonize the values across multiple entries with the same value. Report the results in various
