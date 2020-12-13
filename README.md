@@ -54,6 +54,14 @@ columns are treated as missing data and ignored.
 
 ## Output Formats
 
+### Comment: Text Editing
+
+For unfamiliar users, Excel spreadsheets can be rather cumbersome to work with for various reasons.
+This code emits files in `.tsv` format: tab-separated values. This can be both read and emitted by various
+programs. I highly recommend [Notepad++](https://notepad-plus-plus.org/) for Windows text editing; for Mac,
+perhaps [Atom](https://atom.io/) would be a reasonable alternative. Linux users: what are you doing reading this,
+[but also](https://www.gnu.org/software/emacs/).
+
 ### First round: `book.parsing::parse_raw_data`
 
 The function `book.parsing::parse_raw_data` aggregates entries across categories
@@ -76,7 +84,7 @@ in a tabular format. That output format contains the following columns:
  - `final.author`: the final predicted author label for this entry, after NLP, standardized formatting, and `postprocessing.overrides` applied; or `NA`
  - `final.message`: a `Success` or `Fail` message with some description of the result status; can be used to assess where the program is confident, or possibly needs improvement
 
-### Second round: `book.parsing::process.output
+### Second round: `book.parsing::process.output`
 
 The function `book.parsing::process.output` aggregates harmonized data within categories
 and reports them, such that the results within categories can be used for downstream purposes.
