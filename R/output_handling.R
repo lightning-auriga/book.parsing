@@ -18,7 +18,7 @@ process.output <- function(data, output.prefix, create.summary.data = TRUE) {
 		result.df <- data
 	} else if (is.vector(data, mode = "character")) {
 		stopifnot(file.exists(data))
-		result.df <- read.table(data, header = TRUE, sep = "\t",, quote = "", stringsAsFactors = FALSE)
+		result.df <- read.table(data, header = TRUE, sep = "\t",, quote = "", stringsAsFactors = FALSE, comment.char = "")
 	} else {
 		stop("unrecognized data format in function 'process.output'")
 	}
