@@ -3,6 +3,7 @@
 export(apply.initial.overrides)
 export(apply.posthoc.overrides)
 export(apply.standard.case)
+export(check.known.matches)
 export(parse_raw_data)
 export(process.output)
 export(run.multistep.clustering)

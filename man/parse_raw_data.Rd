@@ -9,6 +9,7 @@ parse_raw_data(
   output.prefix,
   preprocessing.overrides = NA,
   postprocessing.overrides = NA,
+  known.matches = NA,
   remove.duplicates = TRUE,
   disable.nlp.correction = FALSE
 )
@@ -21,6 +22,8 @@ parse_raw_data(
 \item{preprocessing.overrides}{character string, a file of Content/Replacement pairs delimited by TABs, or NA}
 
 \item{postprocessing.overrides}{character string, a file of Content/Replacement pairs delimited by TABs, or NA}
+
+\item{known.matches}{character string, a file of curated {Entry -> {Title, Author}} pairs, or NA}
 
 \item{remove.duplicates}{logical, whether to remove rows in input data that are absolutely identical (will report on this if so)}
 
