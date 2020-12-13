@@ -20,7 +20,7 @@ check.known.matches <- function(df, filename) {
 	stopifnot(length(which(colnames(df) == "raw.string")) == 1)
 	stopifnot(length(which(colnames(df) == "final.title")) == 1)
 	stopifnot(length(which(colnames(df) == "final.author")) == 1)
-	known.data <- read.table(filename, header = TRUE, sep = "\t", quote = "", stringsAsFactors = FALSE)
+	known.data <- read.table(filename, header = TRUE, sep = "\t", quote = "", stringsAsFactors = FALSE, comment.char = "")
 	stopifnot(length(which(colnames(df) == "raw.string")) == 1)
 	stopifnot(length(which(colnames(df) == "final.title")) == 1)
 	stopifnot(length(which(colnames(df) == "final.author")) == 1)
