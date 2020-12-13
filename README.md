@@ -23,7 +23,7 @@ First, load the relevant libary:
 
 The most basic usage is as follows:
 
-`book.parsing::parse_raw_data("input.xlsx", "output_step1")
+`book.parsing::parse_raw_data("input.xlsx", "output_step1")`
 
 After the above step, please manually inspect the output `output_step1.tsv`
 for any incorrect assignments or needed adjustments. All changes should be made to
@@ -96,6 +96,8 @@ The tabular reporting format contains the following columns:
  - `Count`: the number of times this Vote was encountered in this particular Category
 
 ## Version History
+
+14 December 2020: v1.1.1, the Test Data Runner with mild, tangential bugfixes applied
 
 13 December 2020: v1.0.1, with improved userspace parameters in `parse_raw_data`, and a much-improved README.
 
