@@ -13,6 +13,9 @@
 #' @param known.matches character string, a file of curated {Entry -> {Title, Author}} pairs, or NA
 #' @param remove.duplicates logical, whether to remove rows in input data that are absolutely identical (will report on this if so)
 #' @param disable.nlp.correction logical, whether to just report the data as detected from input, without applying NLP corrections
+#' @param cutree.h.combined numeric, `cutree` h parameter for hierarchical cluster calling for combined title/author queries
+#' @param cutree.h.title numeric, `cutree` h parameter for hierarchical cluster calling for titles only
+#' @param cutree.h.author numeric, `cutree` h parameter for hierarchical cluster calling for authors only
 #' @export
 parse_raw_data <- function(input.filename,
 						   output.prefix,
@@ -20,7 +23,10 @@ parse_raw_data <- function(input.filename,
 						   postprocessing.overrides = NA,
 						   known.matches = NA,
 						   remove.duplicates = TRUE,
-						   disable.nlp.correction = FALSE) {
+						   disable.nlp.correction = FALSE,
+						   cutree.h.combined = 5,
+						   cutree.h.title = 3,
+						   cutree.h.author = 3) {
 	## input parameter consistency checks
 	stopifnot(is.vector(input.filename, mode = "character"))
 	stopifnot(is.vector(output.prefix, mode = "character"))
@@ -32,6 +38,12 @@ parse_raw_data <- function(input.filename,
 			  is.na(known.matches))
 	stopifnot(is.logical(remove.duplicates))
 	stopifnot(is.logical(disable.nlp.correction))
+	stopifnot(is.numeric(cutree.h.combined))
+	stopifnot(is.numeric(cutree.h.title))
+	stopifnot(is.numeric(cutree.h.author))
+	stopifnot(cutree.h.combined > 0)
+	stopifnot(cutree.h.title > 0)
+	stopifnot(cutree.h.author > 0)
 	print(paste("reading input from '", input.filename, "' and parsing out into individual entries", sep=""))
 	h <- openxlsx::read.xlsx(input.filename)
 	if (remove.duplicates) {
@@ -102,18 +114,18 @@ parse_raw_data <- function(input.filename,
 	print("    on combined data")
 	all.query <- all.merged.withblanks
 	all.query[neither.match] <- as.vector(result.df$original.string, mode = "character")[neither.match]
-	result.df <- book.parsing::run.multistep.clustering(result.df, all.query, "combined", 5)
+	result.df <- book.parsing::run.multistep.clustering(result.df, all.query, "combined", cutree.h.combined)
 	## run multi-step clustering and labeling on just the titles, and the unmatched patterns
 	print("    on titles only")
 	title.query <- result.df$predicted.title
 	title.query[neither.match] <- as.vector(result.df$original.string, mode = "character")[neither.match]
-	result.df <- book.parsing::run.multistep.clustering(result.df, title.query, "title", 3)
+	result.df <- book.parsing::run.multistep.clustering(result.df, title.query, "title", cutree.h.title)
 	## run multi-step clustering and labeling on just the authors, without the unmatched patterns
 	print("    on authors only")
 	result.df.nomatch <- result.df[neither.match,]
 	result.df.withmatch <- result.df[!neither.match,]
 	author.query <- result.df.withmatch$predicted.author
-	result.df.withmatch <- book.parsing::run.multistep.clustering(result.df.withmatch, author.query, "author", 3)
+	result.df.withmatch <- book.parsing::run.multistep.clustering(result.df.withmatch, author.query, "author", cutree.h.author)
 	result.df.nomatch$author.search.input <- NA
 	result.df.nomatch$author.consensus.label <- NA
 	result.df <- rbind(result.df.withmatch, result.df.nomatch)
