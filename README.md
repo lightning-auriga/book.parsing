@@ -76,7 +76,7 @@ in a tabular format. That output format contains the following columns:
  - `final.author`: the final predicted author label for this entry, after NLP, standardized formatting, and `postprocessing.overrides` applied; or `NA`
  - `final.message`: a `Success` or `Fail` message with some description of the result status; can be used to assess where the program is confident, or possibly needs improvement
 
-### Second round: `book.parsing::process.output
+### Second round: `book.parsing::process.output`
 
 The function `book.parsing::process.output` aggregates harmonized data within categories
 and reports them, such that the results within categories can be used for downstream purposes.
