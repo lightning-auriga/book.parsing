@@ -11,7 +11,10 @@ parse_raw_data(
   postprocessing.overrides = NA,
   known.matches = NA,
   remove.duplicates = TRUE,
-  disable.nlp.correction = FALSE
+  disable.nlp.correction = FALSE,
+  cutree.h.combined = 5,
+  cutree.h.title = 3,
+  cutree.h.author = 3
 )
 }
 \arguments{
