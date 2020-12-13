@@ -1,6 +1,6 @@
 Package: book.parsing
 Title: Parse "Title - Author" Pairs with NLP
-Version: 1.0.0
+Version: 1.1.1
 Authors@R: 
     person(given = "Cameron",
            family = "Palmer",
