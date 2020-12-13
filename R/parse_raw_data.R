@@ -13,6 +13,9 @@
 #' @param known.matches character string, a file of curated {Entry -> {Title, Author}} pairs, or NA
 #' @param remove.duplicates logical, whether to remove rows in input data that are absolutely identical (will report on this if so)
 #' @param disable.nlp.correction logical, whether to just report the data as detected from input, without applying NLP corrections
+#' @param cutree.h.combined numeric, `cutree` h parameter for hierarchical cluster calling for combined title/author queries
+#' @param cutree.h.title numeric, `cutree` h parameter for hierarchical cluster calling for titles only
+#' @param cutree.h.author numeric, `cutree` h parameter for hierarchical cluster calling for authors only
 #' @export
 parse_raw_data <- function(input.filename,
 						   output.prefix,
