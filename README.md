@@ -29,4 +29,6 @@ TBD
 
 ## Version History
 
+12 December 2020: v1.0.0 release, with compatibility to training dataset.
+
 12 December 2020: initial commit with minimal working solution.
