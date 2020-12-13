@@ -12,7 +12,7 @@ apply.initial.overrides <- function(data, filename) {
 	stopifnot(is.vector(data, mode = "character"))
 	stopifnot(is.vector(filename, mode = "character"))
 	stopifnot(file.exists(filename))
-	replacements <- read.table(filename, header = FALSE, sep = "\t")
+	replacements <- read.table(filename, header = FALSE, sep = "\t", quote = "", stringsAsFactors = FALSE)
 	result <- data
 	for (i in seq_len(nrow(replacements))) {
 		result <- gsub(replacements[i, 1], replacements[i, 2], result, perl = TRUE)
@@ -76,16 +76,16 @@ apply.posthoc.overrides <- function(raw.input, title.data, author.data, filename
 		replacement.title <- title.data
 		replacement.author <- author.data
 		stopifnot(file.exists(filename))
-		replacement.data <- read.table(filename, header = FALSE, sep = "\t")
+		replacement.data <- read.table(filename, header = FALSE, sep = "\t", quote = "", stringsAsFactors = FALSE)
 		stopifnot(ncol(replacement.data) == 5)
 		for (i in seq_len(nrow(replacement.data))) {
-			if (!is.na(replacement.data[i, 1])) {
+			if (!is.na(replacement.data[i, 1]) & replacement.data[i, 1] != "") {
 				replacement.title[raw.input == replacement.data[i, 1]] <- replacement.data[i, 4]
 				replacement.author[raw.input == replacement.data[i, 1]] <- replacement.data[i, 5]
-			} else if (!is.na(replacement.data[i, 2])) {
-				replacement.title[replacement.title == replacement.data[i, 2]] <- replacement.data[i, 4]
-			} else if (!is.na(replacement.data[i, 3])) {
-				replacement.author[replacement.author == replacement.data[i, 3]] <- replacement.data[i, 5]
+			} else if (!is.na(replacement.data[i, 2]) & replacement.data[i, 2] != "") {
+				replacement.title[replacement.title == replacement.data[i, 2] & !is.na(replacement.title)] <- replacement.data[i, 4]
+			} else if (!is.na(replacement.data[i, 3]) & replacement.data[i, 3] != "") {
+				replacement.author[replacement.author == replacement.data[i, 3] & !is.na(replacement.author)] <- replacement.data[i, 5]
 			}
 		}
 		list(title = replacement.title, author = replacement.author)
