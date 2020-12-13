@@ -90,7 +90,15 @@ parse_raw_data <- function(input.filename,
 	title.by.author.match <- grepl(title.by.author.pattern, all.candidates, perl = TRUE)
 	title.dash.author.match <- grepl(title.dash.author.pattern, all.candidates, perl = TRUE)
 	both.match <- title.by.author.match & title.dash.author.match
-	stopifnot(length(which(both.match)) == 0)
+	#if (length(which(both.match)) > 0) {
+	#	print("both match error! following example(s):")
+	#	print(all.candidates[both.match])
+	#}
+	#stopifnot(length(which(both.match)) == 0)
+	## temporary fix: if both.match has TRUE entries, prioritize the " by " match, as it seems to work on the data
+	if (length(which(both.match)) > 0) {
+		title.dash.author.match[both.match] <- FALSE
+	}
 	neither.match <- !title.by.author.match & !title.dash.author.match
 	## extract titles
 	all.titles <- rep(NA, length(all.candidates))
