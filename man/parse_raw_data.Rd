@@ -11,7 +11,10 @@ parse_raw_data(
   postprocessing.overrides = NA,
   known.matches = NA,
   remove.duplicates = TRUE,
-  disable.nlp.correction = FALSE
+  disable.nlp.correction = FALSE,
+  cutree.h.combined = 5,
+  cutree.h.title = 3,
+  cutree.h.author = 3
 )
 }
 \arguments{
@@ -28,6 +31,12 @@ parse_raw_data(
 \item{remove.duplicates}{logical, whether to remove rows in input data that are absolutely identical (will report on this if so)}
 
 \item{disable.nlp.correction}{logical, whether to just report the data as detected from input, without applying NLP corrections}
+
+\item{cutree.h.combined}{numeric, \code{cutree} h parameter for hierarchical cluster calling for combined title/author queries}
+
+\item{cutree.h.title}{numeric, \code{cutree} h parameter for hierarchical cluster calling for titles only}
+
+\item{cutree.h.author}{numeric, \code{cutree} h parameter for hierarchical cluster calling for authors only}
 }
 \description{
 This function loads an Excel spreadsheet containing formatted output
