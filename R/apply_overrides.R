@@ -12,7 +12,7 @@ apply.initial.overrides <- function(data, filename) {
 	stopifnot(is.vector(data, mode = "character"))
 	stopifnot(is.vector(filename, mode = "character"))
 	stopifnot(file.exists(filename))
-	replacements <- read.table(filename, header = FALSE, sep = "\t", quote = "", stringsAsFactors = FALSE)
+	replacements <- read.table(filename, header = FALSE, sep = "\t", quote = "", stringsAsFactors = FALSE, comment.char = "")
 	result <- data
 	for (i in seq_len(nrow(replacements))) {
 		result <- gsub(replacements[i, 1], replacements[i, 2], result, perl = TRUE)
@@ -76,7 +76,7 @@ apply.posthoc.overrides <- function(raw.input, title.data, author.data, filename
 		replacement.title <- title.data
 		replacement.author <- author.data
 		stopifnot(file.exists(filename))
-		replacement.data <- read.table(filename, header = FALSE, sep = "\t", quote = "", stringsAsFactors = FALSE)
+		replacement.data <- read.table(filename, header = FALSE, sep = "\t", quote = "", stringsAsFactors = FALSE, comment.char = "")
 		stopifnot(ncol(replacement.data) == 5)
 		for (i in seq_len(nrow(replacement.data))) {
 			if (!is.na(replacement.data[i, 1]) & replacement.data[i, 1] != "") {
